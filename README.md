@@ -1,5 +1,6 @@
 # Architecture
-Backbone + RequireJS
+
+## Backbone + RequireJS:
   Backbone:
     1. underscore
     2. backbone
