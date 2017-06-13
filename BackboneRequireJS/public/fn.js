@@ -96,5 +96,49 @@
         error: []
     }
 
+    // Check for Local Storage Support
+    function supportLocalStorage() {
+      try {
+        return 'localStorage' in window && window['localStorage'] != null;
+      } catch (e) {
+        return false;
+      }
+    }
+    // Memoization function.
+    Function.prototype.memoized = function() {
+      // Values object for caching results.
+      this._values = this._values || {};
+      // Stringify function arguments to make key.
+      var key = JSON.stringify(Array.prototype.slice.call(arguments));
+
+      // Check if result is cached
+      if (this._values[key] !== undefined) {
+        console.log('Loaded from cache: %s => %s', key, this._values[key]);
+        return this._values[key]
+
+      // Check if result is in local storage.
+      } else if (supportLocalStorage && localStorage[this.name+':'+key]) {
+        console.log('Loaded from local storage: %s => %s', key, localStorage[this.name+':'+key]);
+        return localStorage[this.name+':'+key];
+
+        // Call the original function if result not found and store result.
+      } else {
+        var value = JSON.stringify(this.apply(this, arguments));
+        // Store in local storage.
+        if (supportLocalStorage) {
+          localStorage[this.name+':'+key] = value;
+        }
+        console.log('New result: %s => %s', key, value);
+        return this._values[key] = value;
+      }
+    };
+    // Call the memoization function with the original function arguments.
+    Function.prototype.memoize = function() {
+      var fn = this;
+      return function() {
+        return fn.memoized.apply(fn, arguments);
+      };
+    };
+
     return fn;
 });
