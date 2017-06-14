@@ -134,10 +134,10 @@
     };
     // Call the memoization function with the original function arguments.
     Function.prototype.memoize = function() {
-      var fn = this;
-      return function() {
-        return fn.memoized.apply(fn, arguments);
-      };
+        var self = this;
+        return function() {
+            return self.memoized.apply(self, arguments);
+        };
     };
 
     return fn;
